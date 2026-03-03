@@ -12,15 +12,15 @@ import { useTheme } from "@/contexts/ThemeContext";
 const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [featuredImage, setFeaturedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [featuredImage, setFeaturedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       setFeaturedImage(file);
@@ -28,7 +28,7 @@ const CreatePost = () => {
     }
   };
 
-  const generateSlug = (title: string) => {
+  const generateSlug = (title) => {
     return title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
@@ -36,7 +36,7 @@ const CreatePost = () => {
       .slice(0, 36) || ID.unique();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
       toast.error("Please log in first");
@@ -67,7 +67,7 @@ const CreatePost = () => {
 
       toast.success("Story published! 📝");
       navigate(`/post/${slug}`);
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error?.message || "Failed to publish story");
     } finally {
       setLoading(false);

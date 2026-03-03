@@ -13,14 +13,14 @@ const Signup = () => {
   const { signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       await signup(email, password, name);
       toast.success("Account created! Welcome aboard! 🚀");
       navigate("/");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error?.message || "Signup failed. Please try again.");
     } finally {
       setLoading(false);

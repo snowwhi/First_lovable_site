@@ -1,21 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import authService from "@/lib/authService";
 
-interface User {
-  $id: string;
-  name: string;
-  email: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name: string) => Promise<void>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext(null);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -23,8 +9,8 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const checkUser = async () => {
     try {
       const currentUser = await authService.getCurrentUser();
-      setUser(currentUser as User | null);
+      setUser(currentUser);
     } catch {
       setUser(null);
     } finally {
@@ -42,12 +28,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (email, password) => {
     await authService.login({ email, password });
     await checkUser();
   };
 
-  const signup = async (email: string, password: string, name: string) => {
+  const signup = async (email, password, name) => {
     await authService.createAccount({ email, password, name });
     await checkUser();
   };
