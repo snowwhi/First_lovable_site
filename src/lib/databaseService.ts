@@ -3,8 +3,8 @@ import appwriteConfig from "./appwriteConfig";
 
 class DatabaseService {
   client = new Client();
-  databases: Databases;
-  bucket: Storage;
+  databases;
+  bucket;
 
   constructor() {
     this.client
@@ -14,9 +14,7 @@ class DatabaseService {
     this.bucket = new Storage(this.client);
   }
 
-  async createPost({ title, slug, content, featuredImage, status, userId }: {
-    title: string; slug: string; content: string; featuredImage: string; status: string; userId: string;
-  }) {
+  async createPost({ title, slug, content, featuredImage, status, userId }) {
     return await this.databases.createDocument(
       appwriteConfig.appwriteDatabaseId,
       appwriteConfig.appwriteCollectionId,
@@ -25,9 +23,7 @@ class DatabaseService {
     );
   }
 
-  async updatePost(slug: string, { title, content, featuredImage, status }: {
-    title: string; content: string; featuredImage: string; status: string;
-  }) {
+  async updatePost(slug, { title, content, featuredImage, status }) {
     return await this.databases.updateDocument(
       appwriteConfig.appwriteDatabaseId,
       appwriteConfig.appwriteCollectionId,
@@ -36,7 +32,7 @@ class DatabaseService {
     );
   }
 
-  async deletePost(slug: string) {
+  async deletePost(slug) {
     try {
       await this.databases.deleteDocument(
         appwriteConfig.appwriteDatabaseId,
@@ -49,7 +45,7 @@ class DatabaseService {
     }
   }
 
-  async getPost(slug: string) {
+  async getPost(slug) {
     try {
       return await this.databases.getDocument(
         appwriteConfig.appwriteDatabaseId,
@@ -73,7 +69,7 @@ class DatabaseService {
     }
   }
 
-  async uploadFile(file: File) {
+  async uploadFile(file) {
     try {
       return await this.bucket.createFile(
         appwriteConfig.appwriteBucketId,
@@ -85,7 +81,7 @@ class DatabaseService {
     }
   }
 
-  async deleteFile(fileId: string) {
+  async deleteFile(fileId) {
     try {
       await this.bucket.deleteFile(appwriteConfig.appwriteBucketId, fileId);
       return true;
@@ -94,7 +90,7 @@ class DatabaseService {
     }
   }
 
-  getFilePreview(fileId: string) {
+  getFilePreview(fileId) {
     return this.bucket.getFilePreview(appwriteConfig.appwriteBucketId, fileId);
   }
 }

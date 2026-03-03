@@ -12,14 +12,14 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       await login(email, password);
       toast.success("Welcome back! 🎉");
       navigate("/");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error?.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);

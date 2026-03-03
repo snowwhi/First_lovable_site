@@ -9,8 +9,8 @@ import { ArrowLeft, Clock, User, Share2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 const PostDetail = () => {
-  const { id } = useParams<{ id: string }>();
-  const [post, setPost] = useState<any>(null);
+  const { id } = useParams();
+  const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const contentRef = useRef<HTMLDivElement>(null);
@@ -30,7 +30,7 @@ const PostDetail = () => {
     fetchPost();
   }, [id]);
 
-  const getPlainText = (html: string) => {
+  const getPlainText = (html) => {
     const tmp = document.createElement("div");
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || "";

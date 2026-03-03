@@ -2,23 +2,13 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, User } from "lucide-react";
 
-interface BlogCardProps {
-  id: string;
-  title: string;
-  content: string;
-  featuredImage?: string;
-  userId?: string;
-  createdAt?: string;
-  index?: number;
-}
-
-const stripHtml = (html: string) => {
+const stripHtml = (html) => {
   const tmp = document.createElement("div");
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText || "";
 };
 
-const BlogCard = ({ id, title, content, featuredImage, userId, createdAt, index = 0 }: BlogCardProps) => {
+const BlogCard = ({ id, title, content, featuredImage, userId, createdAt, index = 0 }) => {
   const excerpt = stripHtml(content).slice(0, 160) + "...";
 
   return (

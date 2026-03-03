@@ -3,7 +3,7 @@ import appwriteConfig from "./appwriteConfig";
 
 class AuthService {
   client = new Client();
-  account: Account;
+  account;
 
   constructor() {
     this.client
@@ -12,7 +12,7 @@ class AuthService {
     this.account = new Account(this.client);
   }
 
-  async createAccount({ email, password, name }: { email: string; password: string; name: string }) {
+  async createAccount({ email, password, name }) {
     const userAccount = await this.account.create(ID.unique(), email, password, name);
     if (userAccount) {
       return this.login({ email, password });
@@ -20,7 +20,7 @@ class AuthService {
     return userAccount;
   }
 
-  async login({ email, password }: { email: string; password: string }) {
+  async login({ email, password }) {
     return await this.account.createEmailPasswordSession(email, password);
   }
 
