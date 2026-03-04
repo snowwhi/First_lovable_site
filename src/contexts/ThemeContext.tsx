@@ -1,6 +1,13 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import  { createContext, useContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
+// 1. Define the shape of your theme context
+interface ThemeContextType {
+  theme: string;
+  toggleTheme: () => void;
+}
 
-const ThemeContext = createContext(null);
+// 2. Tell the context it starts as null but will hold ThemeContextType
+const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export const useTheme = () => {
   const context = useContext(ThemeContext);
@@ -8,9 +15,14 @@ export const useTheme = () => {
   return context;
 };
 
-export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => {
-    const stored = localStorage.getItem("theme");
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+  const [theme, setTheme] = useState<string>(() => {
+    // Standardizing on a string type for 'theme'
+    const stored = typeof window !== "undefined" ? localStorage.getItem("theme") : null;
     return stored || "light";
   });
 

@@ -2,13 +2,34 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, User } from "lucide-react";
 
-const stripHtml = (html) => {
+// 1. Define the Interface for your props
+interface BlogCardProps {
+  id: string;
+  title: string;
+  content: string;
+  featuredImage?: string | null;
+  userId?: string;
+  createdAt?: string | number | Date;
+  index?: number;
+}
+
+const stripHtml = (html: string) => {
+  // Check for window to avoid SSR errors
+  if (typeof window === "undefined") return html; 
   const tmp = document.createElement("div");
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText || "";
 };
 
-const BlogCard = ({ id, title, content, featuredImage, userId, createdAt, index = 0 }) => {
+const BlogCard = ({ 
+  id, 
+  title, 
+  content, 
+  featuredImage, 
+  userId, 
+  createdAt, 
+  index = 0 
+}: BlogCardProps) => { // 2. Apply the interface here
   const excerpt = stripHtml(content).slice(0, 160) + "...";
 
   return (
@@ -18,7 +39,10 @@ const BlogCard = ({ id, title, content, featuredImage, userId, createdAt, index 
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="group"
     >
-      <Link to={`/post/${id}`} className="block overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1">
+      <Link 
+        to={`/post/${id}`} 
+        className="block overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1"
+      >
         {featuredImage && (
           <div className="aspect-video overflow-hidden">
             <img
@@ -45,7 +69,11 @@ const BlogCard = ({ id, title, content, featuredImage, userId, createdAt, index 
             {createdAt && (
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
-                {new Date(createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                {new Date(createdAt).toLocaleDateString("en-US", { 
+                  month: "short", 
+                  day: "numeric", 
+                  year: "numeric" 
+                })}
               </span>
             )}
           </div>

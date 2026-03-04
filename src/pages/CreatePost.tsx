@@ -1,13 +1,13 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { Editor } from "@tinymce/tinymce-react";
-import databaseService from "@/lib/databaseService";
+import databaseService from "../lib/databaseService";
 import { ID } from "appwrite";
 import { Send, ImagePlus, ArrowLeft } from "lucide-react";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");

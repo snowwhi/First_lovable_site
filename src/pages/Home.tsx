@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import BlogCard from "@/components/BlogCard";
-import BlogSkeleton from "@/components/BlogSkeleton";
-import databaseService from "@/lib/databaseService";
+import BlogCard from "../components/BlogCard";
+import BlogSkeleton from "../components/BlogSkeleton";
+import databaseService from "../lib/databaseService";
 import { BookOpen } from "lucide-react";
-import heroPattern from "@/assets/hero-pattern.jpg";
+import heroPattern from "../assets/hero-pattern.jpg";
 
 const Home = () => {
   const [posts, setPosts] = useState<any[]>([]);

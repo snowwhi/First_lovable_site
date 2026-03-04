@@ -2,14 +2,19 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { Volume2, VolumeX, Pause, Play } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const TextToSpeech = ({ text, contentRef }) => {
+interface TextToSpeechProps {
+  text: string;
+  contentRef: React.RefObject<HTMLElement>;
+}
+
+const TextToSpeech = ({ text, contentRef }: TextToSpeechProps) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
-  const utteranceRef = useRef(null);
-  const intervalRef = useRef(null);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const highlightText = useCallback((charIndex) => {
+  const highlightText = useCallback((charIndex: number) => {
     if (!contentRef?.current) return;
     const el = contentRef.current;
     el.classList.add("tts-speaking");
@@ -17,8 +22,8 @@ const TextToSpeech = ({ text, contentRef }) => {
     const allText = el.querySelectorAll("p, li, h1, h2, h3, span, a, blockquote");
     allText.forEach((node) => {
       if (charIndex > 0) {
-        node.style.transition = "color 0.3s ease";
-        node.style.color = `hsl(var(--foreground))`;
+        (node as HTMLElement).style.transition = "color 0.3s ease";
+        (node as HTMLElement).style.color = `hsl(var(--foreground))`;
       }
     });
 
@@ -26,17 +31,18 @@ const TextToSpeech = ({ text, contentRef }) => {
     const totalChars = text.length;
     const ratio = charIndex / totalChars;
     const targetIdx = Math.floor(ratio * wordElements.length);
-    
-    wordElements.forEach((node, i) => {
+
+    wordElements.forEach((node, i: number) => {
+      const el = node as HTMLElement;
       if (i === targetIdx) {
-        node.style.color = `hsl(var(--primary))`;
-        node.style.transition = "color 0.15s ease";
+        el.style.color = `hsl(var(--primary))`;
+        el.style.transition = "color 0.15s ease";
       } else if (i < targetIdx) {
-        node.style.color = `hsl(var(--muted-foreground))`;
-        node.style.transition = "color 0.5s ease";
+        el.style.color = `hsl(var(--muted-foreground))`;
+        el.style.transition = "color 0.5s ease";
       } else {
-        node.style.color = "";
-        node.style.transition = "";
+        el.style.color = "";
+        el.style.transition = "";
       }
     });
   }, [contentRef, text]);
@@ -46,8 +52,8 @@ const TextToSpeech = ({ text, contentRef }) => {
     contentRef.current.classList.remove("tts-speaking");
     const allEls = contentRef.current.querySelectorAll("p, li, h1, h2, h3, span, a, blockquote");
     allEls.forEach((node) => {
-      node.style.color = "";
-      node.style.transition = "";
+      (node as HTMLElement).style.color = "";
+      (node as HTMLElement).style.transition = "";
     });
   }, [contentRef]);
 
@@ -58,7 +64,7 @@ const TextToSpeech = ({ text, contentRef }) => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.95;
     utterance.pitch = 1;
-    
+
     utterance.onboundary = (event) => {
       highlightText(event.charIndex);
       setProgress((event.charIndex / text.length) * 100);

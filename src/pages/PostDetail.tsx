@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import parse from "html-react-parser";
-import databaseService from "@/lib/databaseService";
-import { PostDetailSkeleton } from "@/components/BlogSkeleton";
-import TextToSpeech from "@/components/TextToSpeech";
+import databaseService from "../lib/databaseService";
+import { PostDetailSkeleton } from "../components/BlogSkeleton";
+import TextToSpeech from "../components/TextToSpeech";
 import { ArrowLeft, Clock, User, Share2 } from "lucide-react";
 import { toast } from "react-toastify";
 
