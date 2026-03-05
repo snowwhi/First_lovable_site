@@ -8,11 +8,15 @@ class AuthService {
   constructor() {
     this.client
       .setEndpoint(appwriteConfig.appwriteUrl)
-      .setProject(appwriteConfig.appwriteProjectId);
+      .setProject(appwriteConfig.appwriteProjectid);
     this.account = new Account(this.client);
   }
 
-  async createAccount({ email, password, name }) {
+  async createAccount({ email, password, name }:{
+    email:string;
+    password:string;
+    name:string;
+  }) {
     const userAccount = await this.account.create(ID.unique(), email, password, name);
     if (userAccount) {
       return this.login({ email, password });
@@ -20,7 +24,10 @@ class AuthService {
     return userAccount;
   }
 
-  async login({ email, password }) {
+  async login({ email, password }:{
+    email:string;
+    password:string;
+  }) {
     return await this.account.createEmailPasswordSession(email, password);
   }
 

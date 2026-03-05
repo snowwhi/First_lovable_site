@@ -1,5 +1,4 @@
-// Appwrite Configuration
-// Replace these values with your Appwrite project details
+
 const appwriteConfig={
 appwriteUrl:String(import.meta.env.VITE_APPWRITE_URL),
 appwriteProjectid:String(import.meta.env.VITE_APPWRITE_PROJECT_ID),

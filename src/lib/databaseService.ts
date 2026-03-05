@@ -9,34 +9,47 @@ class DatabaseService {
   constructor() {
     this.client
       .setEndpoint(appwriteConfig.appwriteUrl)
-      .setProject(appwriteConfig.appwriteProjectId);
+      .setProject(appwriteConfig.appwriteProjectid);
     this.databases = new Databases(this.client);
     this.bucket = new Storage(this.client);
   }
 
-  async createPost({ title, slug, content, featuredImage, status, userId }) {
+  async createPost({ title, slug, content, featuredImage, status, userId }:{
+    title:string;
+    slug:string;
+    content:string;
+    featuredImage:string;
+    status:string;
+    userId:string;
+  }) {
     return await this.databases.createDocument(
-      appwriteConfig.appwriteDatabaseId,
-      appwriteConfig.appwriteCollectionId,
+      appwriteConfig.appwriteDatabaseid,
+      appwriteConfig.appwriteCollectionid,
       slug,
       { title, content, featuredImage, status, userId }
     );
   }
 
-  async updatePost(slug, { title, content, featuredImage, status }) {
+  async updatePost(slug:string, { title, content, featuredImage, status }:{
+    title:string;
+    content:string;
+    featuredImage:string;
+    status:string;
+    userId:string;
+  }) {
     return await this.databases.updateDocument(
-      appwriteConfig.appwriteDatabaseId,
-      appwriteConfig.appwriteCollectionId,
+      appwriteConfig.appwriteDatabaseid,
+      appwriteConfig.appwriteCollectionid,
       slug,
       { title, content, featuredImage, status }
     );
   }
 
-  async deletePost(slug) {
+  async deletePost(slug:string) {
     try {
       await this.databases.deleteDocument(
-        appwriteConfig.appwriteDatabaseId,
-        appwriteConfig.appwriteCollectionId,
+        appwriteConfig.appwriteDatabaseid,
+        appwriteConfig.appwriteCollectionid,
         slug
       );
       return true;
@@ -45,11 +58,11 @@ class DatabaseService {
     }
   }
 
-  async getPost(slug) {
+  async getPost(slug:string) {
     try {
       return await this.databases.getDocument(
-        appwriteConfig.appwriteDatabaseId,
-        appwriteConfig.appwriteCollectionId,
+        appwriteConfig.appwriteDatabaseid,
+        appwriteConfig.appwriteCollectionid,
         slug
       );
     } catch {
@@ -60,8 +73,8 @@ class DatabaseService {
   async getPosts(queries = [Query.equal("status", "active")]) {
     try {
       return await this.databases.listDocuments(
-        appwriteConfig.appwriteDatabaseId,
-        appwriteConfig.appwriteCollectionId,
+        appwriteConfig.appwriteDatabaseid,
+        appwriteConfig.appwriteCollectionid,
         queries
       );
     } catch {
@@ -69,10 +82,10 @@ class DatabaseService {
     }
   }
 
-  async uploadFile(file) {
+  async uploadFile(file:File) {
     try {
       return await this.bucket.createFile(
-        appwriteConfig.appwriteBucketId,
+        appwriteConfig.appwriteBucketid,
         ID.unique(),
         file
       );
@@ -81,17 +94,17 @@ class DatabaseService {
     }
   }
 
-  async deleteFile(fileId) {
+  async deleteFile(fileId:string) {
     try {
-      await this.bucket.deleteFile(appwriteConfig.appwriteBucketId, fileId);
+      await this.bucket.deleteFile(appwriteConfig.appwriteBucketid, fileId);
       return true;
     } catch {
       return false;
     }
   }
 
-  getFilePreview(fileId) {
-    return this.bucket.getFilePreview(appwriteConfig.appwriteBucketId, fileId);
+  getFilePreview(fileId:string) {
+    return this.bucket.getFilePreview(appwriteConfig.appwriteBucketid, fileId);
   }
 }
 
