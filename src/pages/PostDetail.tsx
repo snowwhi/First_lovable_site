@@ -13,7 +13,7 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const contentRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
     const fetchPost = async () => {

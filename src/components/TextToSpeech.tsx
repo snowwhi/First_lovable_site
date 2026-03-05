@@ -2,12 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { Volume2, VolumeX, Pause, Play } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface TextToSpeechProps {
-  text: string;
-  contentRef: React.RefObject<HTMLElement>;
-}
-
-const TextToSpeech = ({ text, contentRef }: TextToSpeechProps) => {
+const TextToSpeech = ({ text, contentRef }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
