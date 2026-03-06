@@ -1,9 +1,8 @@
-console.log("All Vite Env Vars:", import.meta.env);
 const appwriteConfig = {
-    appwriteUrl: import.meta.env.VITE_APPWRITE_ENDPOINT,
-    appwriteProjectid: import.meta.env.VITE_APPWRITE_PROJECT_ID,
-    appwriteDatabaseid: import.meta.env.VITE_APPWRITE_DATABASE_ID,
-    appwriteCollectionid: import.meta.env.VITE_APPWRITE_COLLECTION_ID,
-    appwriteBucketid: import.meta.env.VITE_APPWRITE_BUCKET_ID,
+    appwriteUrl: "https://sfo.cloud.appwrite.io/v1",
+    appwriteProjectid: "69a51fbb0034df707ff4",
+    appwriteDatabaseid: "69a522f8000eb182884f",
+    appwriteCollectionid: "article",
+    appwriteBucketid: "69a52a1a00392b0b0e4c",
 };
 export default appwriteConfig;
