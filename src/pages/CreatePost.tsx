@@ -8,6 +8,11 @@ import databaseService from "../lib/databaseService";
 import { ID } from "appwrite";
 import { Send, ImagePlus, ArrowLeft } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
+import appwriteConfig from '../lib/appwriteConfig'
+import "tinymce/tinymce";
+import "tinymce/themes/silver";
+import "tinymce/icons/default";
+import "tinymce/models/dom";
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
@@ -19,7 +24,6 @@ const CreatePost = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const editorRef = useRef(null);
-
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -123,7 +127,8 @@ const CreatePost = () => {
             {/* TinyMCE Editor */}
             <div className="rounded-xl border border-border overflow-hidden">
               <Editor
-                apiKey="no-api-key"
+              
+                licenseKey="gpl"  
                 onInit={(_evt, editor) => (editorRef.current = editor)}
                 value={content}
                 onEditorChange={(newContent) => setContent(newContent)}

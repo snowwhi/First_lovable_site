@@ -8,8 +8,6 @@ interface AuthContextType {
   signup: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
 }
-
-// 2. Tell the context it will either be the AuthContextType or null
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuth = () => {
