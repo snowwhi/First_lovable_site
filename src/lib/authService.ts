@@ -6,7 +6,6 @@ class AuthService {
   account;
 
   constructor() {
-    console.log("Appwrite Config Loaded in frontend:", appwriteConfig);
     this.client
       .setEndpoint(appwriteConfig.appwriteUrl)
       .setProject(appwriteConfig.appwriteProjectid);

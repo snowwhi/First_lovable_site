@@ -1,4 +1,3 @@
-console.log("All Vite Env Vars:", import.meta.env);
 const appwriteConfig = {
     appwriteUrl: import.meta.env.VITE_APPWRITE_ENDPOINT,
     appwriteProjectid: import.meta.env.VITE_APPWRITE_PROJECT_ID,

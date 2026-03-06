@@ -124,7 +124,10 @@
     font-family: var(--font-body);
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
   }
 }
@@ -133,6 +136,7 @@
   .font-display {
     font-family: var(--font-display);
   }
+
   .font-body {
     font-family: var(--font-body);
   }
@@ -140,9 +144,17 @@
 
 /* TTS highlight animation */
 @keyframes tts-highlight {
-  0% { color: hsl(var(--primary)); }
-  50% { color: hsl(var(--accent)); }
-  100% { color: hsl(var(--foreground)); }
+  0% {
+    color: hsl(var(--primary));
+  }
+
+  50% {
+    color: hsl(var(--accent));
+  }
+
+  100% {
+    color: hsl(var(--foreground));
+  }
 }
 
 .tts-speaking span.tts-active {
@@ -152,17 +164,20 @@
 
 /* Skeleton shimmer */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    hsl(var(--muted)) 25%,
-    hsl(var(--muted-foreground) / 0.08) 50%,
-    hsl(var(--muted)) 75%
-  );
+  background: linear-gradient(90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--muted-foreground) / 0.08) 50%,
+      hsl(var(--muted)) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
