@@ -65,8 +65,7 @@ const CreatePost = () => {
         slug,
         content,
         featuredImage: imageId,
-        status: "active",
-        userId: user.$id,
+        status: "active"
       });
 
       toast.success("Story published! 📝");

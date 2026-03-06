@@ -74,8 +74,8 @@ const Home = () => {
               <BlogCard
                 key={post.$id}
                 id={post.$id}
-                title={post.title}
-                content={post.content}
+                title={post.Title}
+                content={post.Content}
                 featuredImage={post.featuredImage ? String(databaseService.getFilePreview(post.featuredImage)) : undefined}
                 userId={post.userId}
                 createdAt={post.$createdAt}

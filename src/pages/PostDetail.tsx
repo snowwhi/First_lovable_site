@@ -21,6 +21,7 @@ const PostDetail = () => {
       try {
         const result = await databaseService.getPost(id);
         setPost(result);
+        console.log("post data:", result)
       } catch {
         toast.error("Failed to load story");
       } finally {
@@ -64,7 +65,9 @@ const PostDetail = () => {
     );
   }
 
-  const imageUrl = post.featuredImage ? String(databaseService.getFilePreview(post.featuredImage)) : null;
+  const imageUrl = post.featuredimage
+    ? String(databaseService.getFilePreview(post.featuredimage))
+    : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -83,7 +86,7 @@ const PostDetail = () => {
             transition={{ delay: 0.1 }}
             className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight"
           >
-            {post.title}
+            {post.Title}
           </motion.h1>
 
           {/* Meta + Actions */}
@@ -94,11 +97,6 @@ const PostDetail = () => {
             className="flex flex-wrap items-center justify-between gap-3 mb-8"
           >
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              {post.userId && (
-                <span className="flex items-center gap-1">
-                  <User className="h-4 w-4" /> {post.userId.slice(0, 8)}
-                </span>
-              )}
               {post.$createdAt && (
                 <span className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
@@ -110,7 +108,7 @@ const PostDetail = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <TextToSpeech text={getPlainText(post.content)} contentRef={contentRef} />
+              <TextToSpeech text={getPlainText(post.Content)} contentRef={contentRef} />
               <button
                 onClick={handleShare}
                 className="rounded-full bg-secondary p-2 text-secondary-foreground transition-colors hover:bg-secondary/80"
@@ -127,7 +125,7 @@ const PostDetail = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
               src={imageUrl}
-              alt={post.title}
+              alt={post.Title}
               className="w-full rounded-xl mb-8 object-cover max-h-[400px]"
             />
           )}
@@ -140,7 +138,7 @@ const PostDetail = () => {
             transition={{ delay: 0.4 }}
             className="blog-content text-foreground"
           >
-            {parse(post.content || "")}
+            {parse(post.Content || "")}
           </motion.div>
         </motion.div>
       </div>

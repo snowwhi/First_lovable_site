@@ -14,38 +14,46 @@ class DatabaseService {
     this.bucket = new Storage(this.client);
   }
 
-  async createPost({ title, slug, content, featuredImage, status, userId }:{
-    title:string;
-    slug:string;
-    content:string;
-    featuredImage:string;
-    status:string;
-    userId:string;
+  async createPost({ title, slug, content, featuredImage, status }: {
+    title: string;
+    slug: string;
+    content: string;
+    featuredImage: string;
+    status: string;
   }) {
     return await this.databases.createDocument(
       appwriteConfig.appwriteDatabaseid,
       appwriteConfig.appwriteCollectionid,
       slug,
-      { title, content, featuredImage, status, userId }
+      {
+        Title: title,
+        Content: content,
+        featuredimage: featuredImage,
+        status: status,
+      }
     );
   }
 
-  async updatePost(slug:string, { title, content, featuredImage, status }:{
-    title:string;
-    content:string;
-    featuredImage:string;
-    status:string;
-    userId:string;
+  async updatePost(slug: string, { title, content, featuredImage, status }: {
+    title: string;
+    content: string;
+    featuredImage: string;
+    status: string;
   }) {
     return await this.databases.updateDocument(
       appwriteConfig.appwriteDatabaseid,
       appwriteConfig.appwriteCollectionid,
       slug,
-      { title, content, featuredImage, status }
+      {
+        Title: title,
+        Content: content,
+        featuredimage: featuredImage,
+        status: status,
+      }
     );
   }
 
-  async deletePost(slug:string) {
+  async deletePost(slug: string) {
     try {
       await this.databases.deleteDocument(
         appwriteConfig.appwriteDatabaseid,
@@ -58,7 +66,7 @@ class DatabaseService {
     }
   }
 
-  async getPost(slug:string) {
+  async getPost(slug: string) {
     try {
       return await this.databases.getDocument(
         appwriteConfig.appwriteDatabaseid,
@@ -82,7 +90,7 @@ class DatabaseService {
     }
   }
 
-  async uploadFile(file:File) {
+  async uploadFile(file: File) {
     try {
       return await this.bucket.createFile(
         appwriteConfig.appwriteBucketid,
@@ -94,7 +102,7 @@ class DatabaseService {
     }
   }
 
-  async deleteFile(fileId:string) {
+  async deleteFile(fileId: string) {
     try {
       await this.bucket.deleteFile(appwriteConfig.appwriteBucketid, fileId);
       return true;
@@ -103,7 +111,7 @@ class DatabaseService {
     }
   }
 
-  getFilePreview(fileId:string) {
+  getFilePreview(fileId: string) {
     return this.bucket.getFilePreview(appwriteConfig.appwriteBucketid, fileId);
   }
 }
