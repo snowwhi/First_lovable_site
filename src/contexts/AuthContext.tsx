@@ -36,7 +36,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const currentUser = await authService.getCurrentUser();
       setUser(currentUser);
-    } catch {
+    } catch (error) {
+      console.warn("Auth check failed (CORS or network issue):", error);
       setUser(null);
     } finally {
       setLoading(false);
