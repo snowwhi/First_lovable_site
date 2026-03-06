@@ -1,8 +1,6 @@
 import { createContext, useContext, useState, useEffect} from "react";
 import type { ReactNode } from "react";
 import authService from "../lib/authService";
-
-// 1. Define the shape of your context so TypeScript knows what signup is
 interface AuthContextType {
   user: any; // Replace 'any' with your User type if you have one (e.g., Models.User<Models.Preferences>)
   loading: boolean;
@@ -36,7 +34,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const currentUser = await authService.getCurrentUser();
       setUser(currentUser);
-    } catch {
+    } catch (error) {
+      console.warn("Auth check failed (CORS or network issue):", error);
       setUser(null);
     } finally {
       setLoading(false);
