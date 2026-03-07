@@ -9,13 +9,13 @@ const TextToSpeech = ({ text, contentRef }) => {
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const highlightText = useCallback((charIndex: number) => {
+  const highlight= useCallback((charIndex: number) => {
     if (!contentRef?.current) return;
     const el = contentRef.current;
     el.classList.add("tts-speaking");
 
-    const allText = el.querySelectorAll("p, li, h1, h2, h3, span, a, blockquote");
-    allText.forEach((node) => {
+    const all= el.querySelectorAll("p, li, h1, h2, h3, span, a, blockquote");
+    all.forEach((node) => {
       if (charIndex > 0) {
         (node as HTMLElement).style.transition = "color 0.3s ease";
         (node as HTMLElement).style.color = `hsl(var(--foreground))`;
@@ -61,7 +61,7 @@ const TextToSpeech = ({ text, contentRef }) => {
     utterance.pitch = 1;
 
     utterance.onboundary = (event) => {
-      highlightText(event.charIndex);
+      highlight(event.charIndex);
       setProgress((event.charIndex / text.length) * 100);
     };
 
@@ -83,7 +83,7 @@ const TextToSpeech = ({ text, contentRef }) => {
     window.speechSynthesis.speak(utterance);
     setIsSpeaking(true);
     setIsPaused(false);
-  }, [text, highlightText, resetHighlights]);
+  }, [text, highlight, resetHighlights]);
 
   const stopSpeaking = useCallback(() => {
     window.speechSynthesis.cancel();

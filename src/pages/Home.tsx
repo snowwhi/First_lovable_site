@@ -33,7 +33,7 @@ const Home = () => {
         <div className="absolute inset-0 opacity-10">
           <img src={heroPattern} alt="" className="w-full h-full object-cover" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-background/60 to-background" />
         <div className="container mx-auto px-4 py-16 text-center relative">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="flex justify-center mb-4">
