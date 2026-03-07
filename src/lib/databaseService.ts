@@ -3,8 +3,8 @@ import appwriteConfig from "./appwriteConfig";
 
 class DatabaseService {
   client = new Client();
-  databases;
-  bucket;
+  databases: Databases;
+  bucket: Storage;
 
   constructor() {
     this.client
@@ -14,7 +14,16 @@ class DatabaseService {
     this.bucket = new Storage(this.client);
   }
 
-  async createPost({ title, slug, content, featuredImage, status, userId }: {
+  // ─── Posts ───────────────────────────────────────────────────────────────────
+
+  async createPost({
+    title,
+    slug,
+    content,
+    featuredImage,
+    status,
+    userId,
+  }: {
     title: string;
     slug: string;
     content: string;
@@ -23,7 +32,6 @@ class DatabaseService {
     userId?: string;
   }) {
     const permissions = [Permission.read(Role.any())];
-
     if (userId) {
       permissions.push(Permission.update(Role.user(userId)));
       permissions.push(Permission.delete(Role.user(userId)));
@@ -37,19 +45,36 @@ class DatabaseService {
         Title: title,
         Content: content,
         featuredimage: featuredImage,
-        status: status,
-        userId: userId || "",
+        status,
       },
       permissions
     );
   }
 
-  async updatePost(slug: string, { title, content, featuredImage, status }: {
-    title: string;
-    content: string;
-    featuredImage: string;
-    status: string;
-  }) {
+  async updatePost(
+    slug: string,
+    {
+      title,
+      content,
+      featuredImage,
+      status,
+      userId,
+    }: {
+      title: string;
+      content: string;
+      featuredImage: string;
+      status: string;
+      userId?: string;
+    }
+  ) {
+    const permissions = userId
+      ? [
+          Permission.read(Role.any()),
+          Permission.update(Role.user(userId)),
+          Permission.delete(Role.user(userId)),
+        ]
+      : undefined;
+
     return await this.databases.updateDocument(
       appwriteConfig.appwriteDatabaseid,
       appwriteConfig.appwriteCollectionid,
@@ -58,8 +83,9 @@ class DatabaseService {
         Title: title,
         Content: content,
         featuredimage: featuredImage,
-        status: status,
-      }
+        status,
+      },
+      permissions
     );
   }
 
@@ -100,7 +126,9 @@ class DatabaseService {
     }
   }
 
-  async makeOwnPostsPublic(userId: string) {
+  // ─── Fix permissions on existing posts ───────────────────────────────────────
+
+  async fixPostPermissions(userId: string) {
     try {
       const result = await this.getPosts();
       if (!result?.documents?.length) return true;
@@ -108,10 +136,8 @@ class DatabaseService {
       await Promise.all(
         result.documents.map(async (doc: any) => {
           const permissions: string[] = doc.$permissions || [];
-          const hasPublicRead = permissions.includes('read("any")');
-          const isOwnedByUser = permissions.includes(`update("user:${userId}")`) || doc.userId === userId;
-
-          if (!isOwnedByUser || hasPublicRead) return;
+          const alreadyOwned = permissions.includes(`update("user:${userId}")`);
+          if (alreadyOwned) return;
 
           await this.databases.updateDocument(
             appwriteConfig.appwriteDatabaseid,
@@ -122,7 +148,6 @@ class DatabaseService {
               Content: doc.Content,
               featuredimage: doc.featuredimage || "",
               status: doc.status || "active",
-              userId: doc.userId || userId,
             },
             [
               Permission.read(Role.any()),
@@ -138,6 +163,8 @@ class DatabaseService {
       return false;
     }
   }
+
+  // ─── Storage ─────────────────────────────────────────────────────────────────
 
   async uploadFile(file: File) {
     try {
@@ -161,7 +188,10 @@ class DatabaseService {
   }
 
   getFileView(fileId: string) {
-    return this.bucket.getFileView(appwriteConfig.appwriteBucketid, fileId).toString();
+    return this.bucket.getFileView(
+      appwriteConfig.appwriteBucketid,
+      fileId
+    ).toString();
   }
 }
 

@@ -1,0 +1,63 @@
+const storiesAPI = {
+  status: "success",
+  total_results: 3,
+  data: [
+    {
+      id: "st_2026_001",
+      subreddit: "r/AmItheAsshole",
+      title: "AITA for charging my sister 'rent' for my cat to stay at her house?",
+      author: "u/FelineFinancier",
+      timestamp: "2026-03-07T14:30:00Z",
+      upvotes: 14200,
+      content: {
+        short_summary: "My sister insisted on cat-sitting for a month but now wants me to pay for her 'emotional labor.'",
+        full_story: "So, I went on a three-week work trip. My sister, who loves my cat 'Barnaby,' begged to watch him so she wouldn't be lonely. I agreed and provided all food, litter, and even a new scratching post. When I got back, she sent me an invoice for $500 for 'pet-induced stress' because Barnaby knocked over a Lego set. I told her that if she's charging for stress, I'm charging for the 'pet therapy' he provided her. Now the family group chat is blowing up. AITA?",
+        tags: ["FamilyDrama", "Cats", "Finance"]
+      },
+      image: {
+        provider: "Unsplash",
+        image_id: "MTZTGvDs7_8",
+        url: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
+        alt_text: "A grumpy looking tabby cat sitting on a wooden floor"
+      }
+    },
+    {
+      id: "st_2026_002",
+      subreddit: "r/GlitchInTheMatrix",
+      title: "The Coffee Shop that vanished between 2nd and 3rd Street",
+      author: "u/TemporalBarista",
+      timestamp: "2026-03-06T09:15:00Z",
+      upvotes: 8900,
+      content: {
+        short_summary: "I've had breakfast at 'The Blue Door' every Tuesday for a year. Today, there's just a brick wall.",
+        full_story: "I have the receipts. I have the loyalty card with six stamps. This morning, I walked to the corner of 2nd and 3rd like I always do, looking for that bright blue door and the smell of roasted beans. It wasn't there. It wasn't just 'closed'—the entire building looked like it had been a solid brick warehouse for decades. I asked a local mailman, and he looked at me like I was insane. He said that lot has been empty since the 90s. I’m currently holding a warm muffin I bought there yesterday.",
+        tags: ["Paranormal", "Mystery", "Glitch"]
+      },
+      image: {
+        provider: "Unsplash",
+        image_id: "67776492348",
+        url: "https://images.unsplash.com/photo-1485182708500-e8f1f318ba72",
+        alt_text: "A dark, moody alleyway with a single distant light"
+      }
+    },
+    {
+      id: "st_2026_003",
+      subreddit: "r/MaliciousCompliance",
+      title: "Boss told me to 'Follow the manual to the letter.' Okay, enjoy the shutdown.",
+      author: "u/SafetyFirstSilly",
+      timestamp: "2026-03-05T18:45:00Z",
+      upvotes: 22100,
+      content: {
+        short_summary: "New manager wanted to show off his authority. I showed him why we usually skip step 4.",
+        full_story: "I work in a chemical processing plant. We have a manual from 1984 that is severely outdated. We have 'tribal knowledge' workarounds that keep the machines cool. The new shift lead, a 24-year-old MBA grad, yelled at me for not 'respecting the protocol.' He told me, 'If it's in the manual, you do it. Period.' I nodded. Step 4 requires closing the vent for 10 minutes during a pressure spike. In reality, that causes a safety override shut-down. I closed the vent. The entire plant went dark for 12 hours. We lost $2 million in production. I was just following orders.",
+        tags: ["Work", "Compliance", "ProvenRight"]
+      },
+      image: {
+        provider: "Unsplash",
+        image_id: "3847293847",
+        url: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122",
+        alt_text: "Industrial pipes and pressure gauges in a dimly lit factory"
+      }
+    }
+  ]
+};

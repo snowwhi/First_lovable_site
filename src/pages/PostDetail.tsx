@@ -5,7 +5,7 @@ import parse from "html-react-parser";
 import databaseService from "../lib/databaseService";
 import { PostDetailSkeleton } from "../components/BlogSkeleton";
 import TextToSpeech from "../components/TextToSpeech";
-import { ArrowLeft, Clock, Share2, Pencil } from "lucide-react";
+import { ArrowLeft, Clock, Share2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -13,15 +13,18 @@ const PostDetail = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
   const contentRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+
   const isOwner =
     !!user &&
     !!post &&
-    ((post.userId && user.$id === post.userId) ||
-      (Array.isArray(post.$permissions) &&
-        post.$permissions.some((permission: string) => permission === `update("user:${user.$id}")`)));
+    Array.isArray(post.$permissions) &&
+    post.$permissions.some(
+      (permission: string) => permission === `update("user:${user.$id}")`
+    );
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -29,8 +32,6 @@ const PostDetail = () => {
       try {
         const result = await databaseService.getPost(id);
         setPost(result);
-        console.log("post data:", result)
-      
       } catch {
         toast.error("Failed to load story");
       } finally {
@@ -52,6 +53,21 @@ const PostDetail = () => {
       toast.success("Link copied! 🔗");
     } catch {
       toast.error("Failed to copy link");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this story?")) return;
+    setDeleting(true);
+    try {
+      await databaseService.deletePost(post.$id);
+      if (post.featuredimage) await databaseService.deleteFile(post.featuredimage);
+      toast.success("Story deleted!");
+      navigate("/");
+    } catch {
+      toast.error("Failed to delete story");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -77,8 +93,6 @@ const PostDetail = () => {
   const imageUrl = post.featuredimage
     ? String(databaseService.getFileView(post.featuredimage))
     : null;
-
-console.log("imageUrl:", imageUrl)
 
   return (
     <div className="min-h-screen bg-background">
@@ -126,13 +140,28 @@ console.log("imageUrl:", imageUrl)
               >
                 <Share2 className="h-4 w-4" />
               </button>
+
               {isOwner && (
-                <Link
-                  to={`/edit/${post.$id}`}
-                  className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
-                >
-                  <Pencil className="h-3.5 w-3.5" /> Edit
-                </Link>
+                <>
+                  <Link
+                    to={`/edit/${post.$id}`}
+                    className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+                  >
+                    <Pencil className="h-3.5 w-3.5" /> Edit
+                  </Link>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="flex items-center gap-1.5 color-white rounded-full bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive transition-colors hover:bg-destructive/20 disabled:opacity-50"
+                  >
+                    {deleting ? (
+                      <div className="h-3.5 w-3.5 rounded-full border-2 border-destructive/30 border-t-destructive animate-spin" />
+                    ) : (
+                      <Trash2 className="h-3.5 w-3.5" />
+                    )}
+                    {deleting ? "Deleting..." : "Delete"}
+                  </button>
+                </>
               )}
             </div>
           </motion.div>
@@ -145,7 +174,6 @@ console.log("imageUrl:", imageUrl)
               transition={{ delay: 0.3 }}
               src={imageUrl}
               alt={post.Title}
-              onError={(e) => console.log("Image failed to load:", e)}
               className="w-full rounded-xl mb-8 object-cover max-h-[400px]"
             />
           )}
