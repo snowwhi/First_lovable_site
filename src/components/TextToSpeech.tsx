@@ -13,47 +13,43 @@ const TextToSpeech = ({ text, contentRef }: TextToSpeechProps) => {
   const [progress, setProgress] = useState(0);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
+  const activeBlockRef = useRef<number>(-1);
+
   const highlightText = useCallback((charIndex: number) => {
-    if (!contentRef?.current) return;
+    if (!contentRef?.current || !text) return;
     const el = contentRef.current;
-    
+
     const blocks = el.querySelectorAll("p, li, h1, h2, h3, h4, blockquote");
     if (blocks.length === 0) return;
 
     const totalChars = text.length;
-    const ratio = charIndex / totalChars;
+    const ratio = Math.min(Math.max(charIndex / totalChars, 0), 1);
     const targetIdx = Math.min(Math.floor(ratio * blocks.length), blocks.length - 1);
 
     blocks.forEach((node, i) => {
-      const htmlEl = node as HTMLElement;
+      const blockEl = node as HTMLElement;
+      blockEl.classList.remove("tts-active-block", "tts-read-block");
+
       if (i < targetIdx) {
-        htmlEl.style.color = `hsl(var(--muted-foreground))`;
-        htmlEl.style.opacity = "0.5";
-        htmlEl.style.transition = "color 0.4s ease, opacity 0.4s ease";
+        blockEl.classList.add("tts-read-block");
       } else if (i === targetIdx) {
-        htmlEl.style.color = `hsl(var(--primary))`;
-        htmlEl.style.opacity = "1";
-        htmlEl.style.fontWeight = "500";
-        htmlEl.style.transition = "color 0.2s ease, opacity 0.2s ease";
-        htmlEl.scrollIntoView({ behavior: "smooth", block: "center" });
-      } else {
-        htmlEl.style.color = "";
-        htmlEl.style.opacity = "";
-        htmlEl.style.fontWeight = "";
-        htmlEl.style.transition = "";
+        blockEl.classList.add("tts-active-block");
       }
     });
+
+    if (activeBlockRef.current !== targetIdx) {
+      activeBlockRef.current = targetIdx;
+      (blocks[targetIdx] as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }, [contentRef, text]);
 
   const resetHighlights = useCallback(() => {
     if (!contentRef?.current) return;
-    const allEls = contentRef.current.querySelectorAll("p, li, h1, h2, h3, h4, span, a, blockquote");
+    activeBlockRef.current = -1;
+    const allEls = contentRef.current.querySelectorAll("p, li, h1, h2, h3, h4, blockquote");
     allEls.forEach((node) => {
       const el = node as HTMLElement;
-      el.style.color = "";
-      el.style.opacity = "";
-      el.style.fontWeight = "";
-      el.style.transition = "";
+      el.classList.remove("tts-active-block", "tts-read-block");
     });
   }, [contentRef]);
 
@@ -65,11 +61,14 @@ const TextToSpeech = ({ text, contentRef }: TextToSpeechProps) => {
     utterance.rate = 0.95;
     utterance.pitch = 1;
 
+    utterance.onstart = () => {
+      highlightText(0);
+      setProgress(0);
+    };
+
     utterance.onboundary = (event) => {
-      if (event.name === "word") {
-        highlightText(event.charIndex);
-        setProgress((event.charIndex / text.length) * 100);
-      }
+      highlightText(event.charIndex);
+      setProgress((event.charIndex / text.length) * 100);
     };
 
     utterance.onend = () => {

@@ -16,7 +16,12 @@ const PostDetail = () => {
   const navigate = useNavigate();
   const contentRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
-  const isOwner = user && post?.userId && user.$id === post.userId;
+  const isOwner =
+    !!user &&
+    !!post &&
+    ((post.userId && user.$id === post.userId) ||
+      (Array.isArray(post.$permissions) &&
+        post.$permissions.some((permission: string) => permission === `update("user:${user.$id}")`)));
 
   useEffect(() => {
     const fetchPost = async () => {

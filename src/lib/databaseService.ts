@@ -1,4 +1,4 @@
-import { Client, Databases, Storage, Query, ID } from "appwrite";
+import { Client, Databases, Storage, Query, ID, Permission, Role } from "appwrite";
 import appwriteConfig from "./appwriteConfig";
 
 class DatabaseService {
@@ -22,6 +22,13 @@ class DatabaseService {
     status: string;
     userId?: string;
   }) {
+    const permissions = [Permission.read(Role.any())];
+
+    if (userId) {
+      permissions.push(Permission.update(Role.user(userId)));
+      permissions.push(Permission.delete(Role.user(userId)));
+    }
+
     return await this.databases.createDocument(
       appwriteConfig.appwriteDatabaseid,
       appwriteConfig.appwriteCollectionid,
@@ -32,7 +39,8 @@ class DatabaseService {
         featuredimage: featuredImage,
         status: status,
         userId: userId || "",
-      }
+      },
+      permissions
     );
   }
 
@@ -92,6 +100,45 @@ class DatabaseService {
     }
   }
 
+  async makeOwnPostsPublic(userId: string) {
+    try {
+      const result = await this.getPosts();
+      if (!result?.documents?.length) return true;
+
+      await Promise.all(
+        result.documents.map(async (doc: any) => {
+          const permissions: string[] = doc.$permissions || [];
+          const hasPublicRead = permissions.includes('read("any")');
+          const isOwnedByUser = permissions.includes(`update("user:${userId}")`) || doc.userId === userId;
+
+          if (!isOwnedByUser || hasPublicRead) return;
+
+          await this.databases.updateDocument(
+            appwriteConfig.appwriteDatabaseid,
+            appwriteConfig.appwriteCollectionid,
+            doc.$id,
+            {
+              Title: doc.Title,
+              Content: doc.Content,
+              featuredimage: doc.featuredimage || "",
+              status: doc.status || "active",
+              userId: doc.userId || userId,
+            },
+            [
+              Permission.read(Role.any()),
+              Permission.update(Role.user(userId)),
+              Permission.delete(Role.user(userId)),
+            ]
+          );
+        })
+      );
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async uploadFile(file: File) {
     try {
       return await this.bucket.createFile(
@@ -113,8 +160,8 @@ class DatabaseService {
     }
   }
 
- getFileView(fileId: string) {
-    return this.bucket.getFileView(appwriteConfig.appwriteBucketid, fileId).toString();;
+  getFileView(fileId: string) {
+    return this.bucket.getFileView(appwriteConfig.appwriteBucketid, fileId).toString();
   }
 }
 
