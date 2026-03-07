@@ -65,7 +65,8 @@ const CreatePost = () => {
         slug,
         content,
         featuredImage: imageId,
-        status: "active"
+        status: "active",
+        userId: user.$id,
       });
 
       toast.success("Story published! 📝");
@@ -118,7 +119,7 @@ const CreatePost = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   src={imagePreview}
                   alt="Preview"
-                  className="mt-3 max-h-48 rounded-xl object-cover"
+                  className="mt-3 h-24 w-24 rounded-lg object-cover border border-border shadow-sm"
                 />
               )}
             </div>
