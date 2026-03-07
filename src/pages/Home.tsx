@@ -82,7 +82,7 @@ const Home = () => {
                 id={post.$id}
                 title={post.Title}
                 content={post.Content}
-                featuredImage={post.featuredImage ? String(databaseService.getFileView(post.featuredImage)) : undefined}
+                featuredImage={post.featuredimage ? String(databaseService.getFileView(post.featuredimage)) : undefined}
                 userId={post.userId}
                 createdAt={post.$createdAt}
                 index={index}

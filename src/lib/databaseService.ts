@@ -160,8 +160,8 @@ class DatabaseService {
     }
   }
 
- getFileView(fileId: string) {
-    return this.bucket.getFileView(appwriteConfig.appwriteBucketid, fileId).toString();;
+  getFileView(fileId: string) {
+    return this.bucket.getFileView(appwriteConfig.appwriteBucketid, fileId).toString();
   }
 }
 
