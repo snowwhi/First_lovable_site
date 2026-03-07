@@ -5,14 +5,20 @@ import BlogSkeleton from "../components/BlogSkeleton";
 import databaseService from "../lib/databaseService";
 import { BookOpen } from "lucide-react";
 import heroPattern from "../assets/hero-pattern.jpg";
+import { useAuth } from "../contexts/AuthContext";
 
 const Home = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        if (user?.$id) {
+          await databaseService.makeOwnPostsPublic(user.$id);
+        }
+
         const result = await databaseService.getPosts();
         if (result) {
           setPosts(result.documents);
@@ -24,7 +30,7 @@ const Home = () => {
       }
     };
     fetchPosts();
-  }, []);
+  }, [user?.$id]);
 
   return (
     <div className="min-h-screen bg-background">
