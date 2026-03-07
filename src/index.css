@@ -145,9 +145,23 @@
   100% { color: hsl(var(--foreground)); }
 }
 
-.tts-speaking span.tts-active {
-  animation: tts-highlight 0.8s ease-in-out;
+.blog-content .tts-active-block {
   color: hsl(var(--primary));
+  font-weight: 500;
+  opacity: 1;
+  animation: tts-highlight 0.9s ease-in-out infinite alternate;
+}
+
+.blog-content .tts-read-block {
+  color: hsl(var(--muted-foreground));
+  opacity: 0.55;
+  transition: color 0.35s ease, opacity 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-content .tts-active-block {
+    animation: none;
+  }
 }
 
 /* Skeleton shimmer */
