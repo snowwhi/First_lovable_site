@@ -111,8 +111,8 @@ class DatabaseService {
     }
   }
 
-  getFilePreview(fileId: string) {
-    return this.bucket.getFilePreview(appwriteConfig.appwriteBucketid, fileId);
+ getFileView(fileId: string) {
+    return this.bucket.getFileView(appwriteConfig.appwriteBucketid, fileId).toString();;
   }
 }
 

@@ -22,6 +22,7 @@ const PostDetail = () => {
         const result = await databaseService.getPost(id);
         setPost(result);
         console.log("post data:", result)
+      
       } catch {
         toast.error("Failed to load story");
       } finally {
@@ -66,8 +67,10 @@ const PostDetail = () => {
   }
 
   const imageUrl = post.featuredimage
-    ? String(databaseService.getFilePreview(post.featuredimage))
+    ? String(databaseService.getFileView(post.featuredimage))
     : null;
+
+console.log("imageUrl:", imageUrl)
 
   return (
     <div className="min-h-screen bg-background">
@@ -126,6 +129,7 @@ const PostDetail = () => {
               transition={{ delay: 0.3 }}
               src={imageUrl}
               alt={post.Title}
+              onError={(e) => console.log("Image failed to load:", e)}
               className="w-full rounded-xl mb-8 object-cover max-h-[400px]"
             />
           )}
