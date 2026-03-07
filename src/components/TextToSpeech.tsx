@@ -4,54 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface TextToSpeechProps {
   text: string;
-  contentRef: React.RefObject<HTMLDivElement | null>;
+  contentRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-const TextToSpeech = ({ text, contentRef }: TextToSpeechProps) => {
+const TextToSpeech = ({ text }: TextToSpeechProps) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-
-  const activeBlockRef = useRef<number>(-1);
-
-  const highlightText = useCallback((charIndex: number) => {
-    if (!contentRef?.current || !text) return;
-    const el = contentRef.current;
-
-    const blocks = el.querySelectorAll("p, li, h1, h2, h3, h4, blockquote");
-    if (blocks.length === 0) return;
-
-    const totalChars = text.length;
-    const ratio = Math.min(Math.max(charIndex / totalChars, 0), 1);
-    const targetIdx = Math.min(Math.floor(ratio * blocks.length), blocks.length - 1);
-
-    blocks.forEach((node, i) => {
-      const blockEl = node as HTMLElement;
-      blockEl.classList.remove("tts-active-block", "tts-read-block");
-
-      if (i < targetIdx) {
-        blockEl.classList.add("tts-read-block");
-      } else if (i === targetIdx) {
-        blockEl.classList.add("tts-active-block");
-      }
-    });
-
-    if (activeBlockRef.current !== targetIdx) {
-      activeBlockRef.current = targetIdx;
-      (blocks[targetIdx] as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, [contentRef, text]);
-
-  const resetHighlights = useCallback(() => {
-    if (!contentRef?.current) return;
-    activeBlockRef.current = -1;
-    const allEls = contentRef.current.querySelectorAll("p, li, h1, h2, h3, h4, blockquote");
-    allEls.forEach((node) => {
-      const el = node as HTMLElement;
-      el.classList.remove("tts-active-block", "tts-read-block");
-    });
-  }, [contentRef]);
 
   const startSpeaking = useCallback(() => {
     if (!text) return;
@@ -61,13 +21,7 @@ const TextToSpeech = ({ text, contentRef }: TextToSpeechProps) => {
     utterance.rate = 0.95;
     utterance.pitch = 1;
 
-    utterance.onstart = () => {
-      highlightText(0);
-      setProgress(0);
-    };
-
     utterance.onboundary = (event) => {
-      highlightText(event.charIndex);
       setProgress((event.charIndex / text.length) * 100);
     };
 
@@ -75,29 +29,26 @@ const TextToSpeech = ({ text, contentRef }: TextToSpeechProps) => {
       setIsSpeaking(false);
       setIsPaused(false);
       setProgress(0);
-      resetHighlights();
     };
 
     utterance.onerror = () => {
       setIsSpeaking(false);
       setIsPaused(false);
       setProgress(0);
-      resetHighlights();
     };
 
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
     setIsSpeaking(true);
     setIsPaused(false);
-  }, [text, highlightText, resetHighlights]);
+  }, [text]);
 
   const stopSpeaking = useCallback(() => {
     window.speechSynthesis.cancel();
     setIsSpeaking(false);
     setIsPaused(false);
     setProgress(0);
-    resetHighlights();
-  }, [resetHighlights]);
+  }, []);
 
   const togglePause = useCallback(() => {
     if (isPaused) {

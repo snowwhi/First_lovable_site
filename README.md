@@ -1,83 +1,81 @@
-# First Lovable Site (RedditTales)
+# Blog Platform
 
-A modern, responsive web application built with React, Vite, Tailwind CSS, and Appwrite. 
+A full-stack blogging platform built with React, TypeScript, and Appwrite. Supports rich text editing, featured images, text-to-speech, and per-user post ownership.
 
-## 🚀 Tech Stack
+## Stack
 
-- **Frontend Framework:** React 19 + Vite
-- **Styling:** Tailwind CSS + shadcn/ui
-- **Routing:** React Router DOM
-- **State Management:** React Query (@tanstack/react-query)
-- **Backend/BaaS:** Appwrite (Authentication, Databases, Storage)
+- **Frontend**: React, TypeScript, Vite, Tailwind CSS, Framer Motion
+- **Backend**: Appwrite (Auth, Database, Storage)
+- **Editor**: TinyMCE (GPL, self-hosted)
 
-## 📋 Prerequisites
+## Setup
 
-Before you begin, ensure you have the following installed:
-- [Node.js](https://nodejs.org/) (v16 or higher recommended)
-- npm (comes with Node.js)
-
-## 🛠️ Setup & Installation
-
-Follow these steps to get the project running on your local machine:
-
-### 1. Install Dependencies
-Clone the repository and install the required npm packages.
 ```bash
 npm install
-```
-
-### 2. Configure Tailwind CSS
-*(Note: If the repository was freshly downloaded, the Tailwind CSS setup might need to be initialized).*
-Ensure that `tailwindcss` is installed and the configuration files exist. If styles are missing, run:
-```bash
-npm install -D tailwindcss@3 postcss autoprefixer
-npx tailwindcss init -p
-```
-Make sure `tailwind.config.js` is updated with the custom `shadcn` color variables defined in `src/index.css`.
-
-### 3. Setup Environment Variables
-This project requires connection to an Appwrite backend. You must create a `.env` file in the root of your project directory (at the same level as `package.json`).
-
-Create a file named `.env` and add your Appwrite credentials:
-```env
-VITE_APPWRITE_PROJECT_ID=your_project_id
-VITE_APPWRITE_PROJECT_NAME="Your Project Name"
-VITE_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
-VITE_APPWRITE_DATABASE_ID=your_database_id
-VITE_APPWRITE_COLLECTION_ID=your_collection_id
-VITE_APPWRITE_BUCKET_ID=your_bucket_id
-```
-
-**⚠️ Important Appwrite Configuration Notes:**
-- **No Quotes:** Do not wrap your IDs in single quotes (e.g., `'123'`). Vite will parse the quotes literally, which will corrupt the ID and cause Appwrite `404` or `401 CORS` errors.
-- **Regional Endpoints:** If your Appwrite Cloud project is hosted in a specific region (e.g., Singapore), you **must** use the regional endpoint to avoid CORS blocks. For example, use `https://sgp.cloud.appwrite.io/v1` instead of the global `cloud.appwrite.io` endpoint.
-- **Add Platform:** Ensure you have added `localhost` as a "Web App" platform in your Appwrite Console under project settings, otherwise Appwrite will block local development requests with a CORS error.
-
-### 4. Run the Development Server
-Start the Vite development server:
-```bash
 npm run dev
 ```
-Navigate to `http://localhost:5173` in your browser to view the application.
 
-## 🐛 Common Troubleshooting
-
-**Issue:** `Failed to Fetch` or `CORS policy` error in the browser console during signup/login.
-**Solutions:**
-1. Check that your `.env` variables do not contain stray quotation marks.
-2. Verify that you are using the correct Regional Endpoint in `VITE_APPWRITE_ENDPOINT` (e.g., `sgp.cloud.appwrite.io`).
-3. Confirm that `localhost` is added to the "Platforms" list in your Appwrite project dashboard.
-
-**Issue:** `404 Project with the requested ID could not be found.`
-**Solution:** Do not append region prefixes (like `sgp-`) to your `VITE_APPWRITE_PROJECT_ID`. The ID is purely alphanumeric. The region suffix belongs only in the `VITE_APPWRITE_ENDPOINT` URL.
-
-**Issue:** The site loads, but looks like plain HTML without any styling.
-**Solution:** Tailwind CSS requires processing. Stop the server, run `npm install -D tailwindcss@3 postcss autoprefixer`, create a basic `tailwind.config.js`, and restart with `npm run dev`.
-
-## 📦 Build for Production
-
-To create an optimized production build:
-```bash
-npm run build
+**.env**
+```env
+VITE_APPWRITE_URL=https://cloud.appwrite.io/v1
+VITE_APPWRITE_PROJECT_ID=
+VITE_APPWRITE_DATABASE_ID=
+VITE_APPWRITE_COLLECTION_ID=
+VITE_APPWRITE_BUCKET_ID=
 ```
-The compiled files will be generated in the `dist` directory.
+
+**Appwrite Collection** (`article`)
+
+| Attribute     | Type   | Required |
+|---------------|--------|----------|
+| Title         | String | Yes      |
+| Content       | String | Yes      |
+| featuredimage | String | No       |
+| status        | String | Yes      |
+
+**Storage**: Set bucket permissions → Role `Any` → `Read`.
+
+---
+
+## Bug History
+
+A log of every bug encountered and resolved during development.
+
+---
+
+**1. `allText` ReferenceError — TextToSpeech.tsx**
+Variable declared as `all` but referenced as `allText`. Renamed to match.
+
+---
+
+**2. Featured image not displaying**
+Appwrite `uploadFile()` returns a file ID, not a URL. Added `getFileView(fileId)` to `databaseService.ts` to convert the ID into a usable CDN URL. Used `getFileView` over `getFilePreview` — the latter can fail for certain file types.
+
+---
+
+**3. Field name case mismatch — `featuredImage` vs `featuredimage`**
+Appwrite attribute names are case-sensitive. The collection attribute was `featuredimage` (lowercase) but the code used `featuredImage` (camelCase) in several places, causing the field to be silently ignored. Fixed consistently across all files.
+
+---
+
+**4. `getFileView` called before post loads**
+`imageUrl` was computed at the top of the component before the post fetch completed, passing `undefined` as the file ID and throwing `AppwriteException: Missing required parameter`. Moved the calculation to after the null check.
+
+---
+
+**5. `userId` field causing 400 Bad Request**
+`createPost` was sending a `userId` field that didn't exist as a collection attribute. Appwrite rejected the request. Removed `userId` from document data — ownership is handled entirely through `$permissions`.
+
+---
+
+**6. Edit always redirecting — ownership check on non-existent field**
+`EditPost.tsx` checked `post.userId !== user.$id`, but `userId` was never stored. This was always `undefined`, so every user got redirected. Fixed by checking `$permissions` instead:
+```ts
+post.$permissions.includes(`update("user:${user.$id}")`)
+```
+
+---
+
+**7. Featured image cleared on update**
+`updatePost` was passing `featuredImage: ""`, overwriting the stored image on every save. Fixed by reading the existing image ID from the fetched post and preserving it unless a new image is explicitly uploaded.
+

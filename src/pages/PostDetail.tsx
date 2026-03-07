@@ -98,6 +98,7 @@ const PostDetail = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto max-w-3xl px-4 py-8">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+
           <button
             onClick={() => navigate(-1)}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
@@ -109,61 +110,66 @@ const PostDetail = () => {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight"
+            className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight"
           >
             {post.Title}
           </motion.h1>
 
-          {/* Meta + Actions */}
+          {/* Meta row — date */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-wrap items-center justify-between gap-3 mb-8"
+            className="flex items-center gap-4 text-sm text-muted-foreground mb-4"
           >
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              {post.$createdAt && (
-                <span className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
-                  {new Date(post.$createdAt).toLocaleDateString("en-US", {
-                    month: "long", day: "numeric", year: "numeric",
-                  })}
-                </span>
-              )}
-            </div>
+            {post.$createdAt && (
+              <span className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                {new Date(post.$createdAt).toLocaleDateString("en-US", {
+                  month: "long", day: "numeric", year: "numeric",
+                })}
+              </span>
+            )}
+          </motion.div>
 
-            <div className="flex items-center gap-2">
-              <TextToSpeech text={getPlainText(post.Content)} contentRef={contentRef} />
-              <button
-                onClick={handleShare}
-                className="rounded-full bg-secondary p-2 text-secondary-foreground transition-colors hover:bg-secondary/80"
-              >
-                <Share2 className="h-4 w-4" />
-              </button>
+          {/* Actions row — TTS, share, edit, delete */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.25 }}
+            className="flex flex-wrap items-center gap-2 mb-8"
+          >
+            <TextToSpeech text={getPlainText(post.Content)} contentRef={contentRef} />
 
-              {isOwner && (
-                <>
-                  <Link
-                    to={`/edit/${post.$id}`}
-                    className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
-                  >
-                    <Pencil className="h-3.5 w-3.5" /> Edit
-                  </Link>
-                  <button
-                    onClick={handleDelete}
-                    disabled={deleting}
-                    className="flex items-center gap-1.5 color-white rounded-full bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive transition-colors hover:bg-destructive/20 disabled:opacity-50"
-                  >
-                    {deleting ? (
-                      <div className="h-3.5 w-3.5 rounded-full border-2 border-destructive/30 border-t-destructive animate-spin" />
-                    ) : (
-                      <Trash2 className="h-3.5 w-3.5" />
-                    )}
-                    {deleting ? "Deleting..." : "Delete"}
-                  </button>
-                </>
-              )}
-            </div>
+            <button
+              onClick={handleShare}
+              className="rounded-full bg-secondary p-2 text-secondary-foreground transition-colors hover:bg-secondary/80"
+            >
+              <Share2 className="h-4 w-4" />
+            </button>
+
+            {isOwner && (
+              <>
+                <Link
+                  to={`/edit/${post.$id}`}
+                  className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition-colors hover:opacity-90"
+                >
+                  <Pencil className="h-3.5 w-3.5" /> Edit
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="flex items-center gap-1.5 rounded-full bg-destructive px-3 py-2 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
+                >
+                  {deleting ? (
+                    <div className="h-3.5 w-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                  ) : (
+                    <Trash2 className="h-3.5 w-3.5" />
+                  )}
+                  {deleting ? "Deleting..." : "Delete"}
+                </button>
+              </>
+            )}
           </motion.div>
 
           {/* Featured Image */}
@@ -188,6 +194,7 @@ const PostDetail = () => {
           >
             {parse(post.Content || "")}
           </motion.div>
+
         </motion.div>
       </div>
     </div>
