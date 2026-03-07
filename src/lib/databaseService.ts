@@ -14,12 +14,13 @@ class DatabaseService {
     this.bucket = new Storage(this.client);
   }
 
-  async createPost({ title, slug, content, featuredImage, status }: {
+  async createPost({ title, slug, content, featuredImage, status, userId }: {
     title: string;
     slug: string;
     content: string;
     featuredImage: string;
     status: string;
+    userId?: string;
   }) {
     return await this.databases.createDocument(
       appwriteConfig.appwriteDatabaseid,
@@ -30,6 +31,7 @@ class DatabaseService {
         Content: content,
         featuredimage: featuredImage,
         status: status,
+        userId: userId || "",
       }
     );
   }
