@@ -1,19 +1,22 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import parse from "html-react-parser";
 import databaseService from "../lib/databaseService";
 import { PostDetailSkeleton } from "../components/BlogSkeleton";
 import TextToSpeech from "../components/TextToSpeech";
-import { ArrowLeft, Clock, User, Share2 } from "lucide-react";
+import { ArrowLeft, Clock, Share2, Pencil } from "lucide-react";
 import { toast } from "react-toastify";
+import { useAuth } from "../contexts/AuthContext";
 
 const PostDetail = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const contentRef = useRef(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
+  const isOwner = user && post?.userId && user.$id === post.userId;
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -118,6 +121,14 @@ console.log("imageUrl:", imageUrl)
               >
                 <Share2 className="h-4 w-4" />
               </button>
+              {isOwner && (
+                <Link
+                  to={`/edit/${post.$id}`}
+                  className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+                >
+                  <Pencil className="h-3.5 w-3.5" /> Edit
+                </Link>
+              )}
             </div>
           </motion.div>
 
